@@ -11,27 +11,28 @@ from googleapiclient.discovery import build
 
 app = Flask(__name__)
 
-OPENAI_API_KEY = os.getenv("OPENAI_API_KEY")
 VERIFY_TOKEN = os.getenv("VERIFY_TOKEN")
 WHATSAPP_TOKEN = os.getenv("WHATSAPP_TOKEN")
 PHONE_NUMBER_ID = os.getenv("PHONE_NUMBER_ID")
+
+GOOGLE_CREDENTIALS = os.getenv("GOOGLE_CREDENTIALS")
+GOOGLE_TOKEN = os.getenv("GOOGLE_TOKEN")
 
 SCOPES = ["https://www.googleapis.com/auth/calendar"]
 
 
 def get_calendar_service():
-    if not os.path.exists("token.json"):
-        raise FileNotFoundError("token.json não encontrado.")
-    if not os.path.exists("credentials.json"):
-        raise FileNotFoundError("credentials.json não encontrado.")
+    if not GOOGLE_CREDENTIALS:
+        raise ValueError("Variável GOOGLE_CREDENTIALS não encontrada no Render.")
 
-    creds = Credentials.from_authorized_user_file("token.json", SCOPES)
+    if not GOOGLE_TOKEN:
+        raise ValueError("Variável GOOGLE_TOKEN não encontrada no Render.")
+
+    token_info = json.loads(GOOGLE_TOKEN)
+    creds = Credentials.from_authorized_user_info(token_info, SCOPES)
 
     if creds.expired and creds.refresh_token:
         creds.refresh(GoogleRequest())
-
-        with open("token.json", "w", encoding="utf-8") as token_file:
-            token_file.write(creds.to_json())
 
     return build("calendar", "v3", credentials=creds)
 
@@ -91,7 +92,6 @@ def extrair_titulo_evento(texto):
         flags=re.IGNORECASE,
     )
     texto_limpo = re.sub(r"^\s*(uma|um)\s*", "", texto_limpo, flags=re.IGNORECASE)
-
     texto_limpo = re.sub(r"\s+", " ", texto_limpo).strip(" -,:;")
 
     if not texto_limpo:

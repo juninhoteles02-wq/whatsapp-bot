@@ -42,7 +42,7 @@ def webhook():
             text = message["text"]["body"]
             phone = message["from"]
 
-            resposta = "Teste funcionando 🔥"
+            resposta = processar_mensagem(text)
 
             enviar_resposta(phone, resposta)
 

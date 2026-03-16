@@ -14,6 +14,7 @@ app = Flask(__name__)
 VERIFY_TOKEN = os.getenv("VERIFY_TOKEN")
 WHATSAPP_TOKEN = os.getenv("WHATSAPP_TOKEN")
 PHONE_NUMBER_ID = os.getenv("PHONE_NUMBER_ID")
+OPENAI_API_KEY = os.getenv("OPENAI_API_KEY")
 
 GOOGLE_CREDENTIALS = os.getenv("GOOGLE_CREDENTIALS")
 GOOGLE_TOKEN = os.getenv("GOOGLE_TOKEN")
@@ -28,7 +29,11 @@ def get_calendar_service():
     if not GOOGLE_TOKEN:
         raise ValueError("Variável GOOGLE_TOKEN não encontrada no Render.")
 
-    token_info = json.loads(GOOGLE_TOKEN)
+    try:
+        token_info = json.loads(GOOGLE_TOKEN)
+    except json.JSONDecodeError:
+        raise ValueError("GOOGLE_TOKEN está mal formatado. Cole o JSON completo no Render.")
+
     creds = Credentials.from_authorized_user_info(token_info, SCOPES)
 
     if creds.expired and creds.refresh_token:
@@ -91,6 +96,7 @@ def extrair_titulo_evento(texto):
         texto_limpo,
         flags=re.IGNORECASE,
     )
+
     texto_limpo = re.sub(r"^\s*(uma|um)\s*", "", texto_limpo, flags=re.IGNORECASE)
     texto_limpo = re.sub(r"\s+", " ", texto_limpo).strip(" -,:;")
 

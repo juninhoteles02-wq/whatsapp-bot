@@ -198,6 +198,11 @@ def enviar_mensagem_whatsapp(numero, mensagem):
 
 @app.route("/", methods=["GET"])
 def home():
+    return "Servidor do bot rodando com sucesso!", 200
+
+
+@app.route("/webhook", methods=["GET"])
+def verificar_webhook():
     mode = request.args.get("hub.mode")
     token = request.args.get("hub.verify_token")
     challenge = request.args.get("hub.challenge")
@@ -205,10 +210,10 @@ def home():
     if mode == "subscribe" and token == VERIFY_TOKEN:
         return challenge, 200
 
-    return "Servidor do bot rodando com sucesso!", 200
+    return "Token inválido", 403
 
 
-@app.route("/", methods=["POST"])
+@app.route("/webhook", methods=["POST"])
 def receber_mensagem():
     try:
         data = request.get_json()

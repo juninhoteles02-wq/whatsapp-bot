@@ -1,7 +1,7 @@
-Flask
+flask
 requests
 gunicorn
-google-api-python-client
 google-auth
 google-auth-oauthlib
-openai
+google-auth-httplib2
+google-api-python-client

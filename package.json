@@ -1,0 +1,19 @@
+{
+  "name": "combinado-server",
+  "version": "1.0.0",
+  "description": "Servidor do Combinado: assistente de agendamento via WhatsApp para barbearias (e futuros clientes)",
+  "main": "src/index.js",
+  "type": "commonjs",
+  "scripts": {
+    "start": "node src/index.js",
+    "dev": "node --watch src/index.js",
+    "test:logic": "node tests/logic-test.js"
+  },
+  "dependencies": {
+    "express": "^4.19.2",
+    "dotenv": "^16.4.5",
+    "googleapis": "^140.0.1",
+    "openai": "^4.60.0",
+    "node-cron": "^3.0.3"
+  }
+}
